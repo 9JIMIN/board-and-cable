@@ -93,7 +93,7 @@ void loop() {
 - 도체: 전자가 원자가띠-전도띠(conduction band-valence band) 사이를 자유롭게 오가면서 전도성이 큰 물질.
 - 부도체: 원자가띠-전도띠가 도체처럼 겹쳐지지 않고, 틈이 크기때문에 전자가 오갈 수 없다. (전도성이 작아진다.)
 
-### LED
+### LED 원리
 
 - Light Emitting Diode, 빛을 내는 반도체 소자.
 
@@ -165,3 +165,152 @@ n-타입의 여분의 전자가 p-타입의 conduction밴드로 이동하고, �
 그리고 다이오드의 전압에 대해 전류는 제곱함수 그래프를 그린다. (전압이 높아질 수록, 흐르는 전류도 빠르게 커진다는 뜻.)
 그래서 높은 전압에 다이오드를 다이렉트로 연결하면 다이오드가 탈 수 있다.  
 
+## lesson 03 - 빵판
+
+### 빵판 구조
+
+빵판의 긴부분을 옆으로 해서 두었을 때,
+
+아래 위 두 부분으로 나뉜 것을 볼 수 있다.
+각 부분의 세로로 나란한 구멍들은 연결되어있다.
+하지만, 두 부분으로 나눠진 부분은 연결되지 않는다. 
+
+옆으로 나란한 구멍들은 연결되지 않았다. 
+
+아래위에 보면 +, - 로 표시된 긴 부분의 가로로 모든 구멍이 연결되어 있다. 
+
+<img src='./images/빵판.png' width=500>
+
+### 회로구성 실습
+
+> 아두이노의 1~13 번 핀이 전압을 준다. ( + )
+> GND 핀은 ( - ) 이다. 
+>
+> 회로를 구성할때, 저 두 핀을 사용한다. 
+>
+> LED의 긴 다리가 p, 짧은 다리가 n이다. p가 +, n이 -에 연결되어야 한다. 
+
+아래와 같이 회로를 구성하고, 아래 코드를 넘겨보자.
+
+<img src='./images/빵판-led.jpg' width='500'>
+
+```c++
+void setup() {
+  pinMode(13, OUTPUT);
+}
+// 핀 번호는 1~13 중 아무거나 상관없다. 선을 연결한 핀을 넣어주면 된다. 
+void loop() {
+  digitalWrite(13, HIGH);
+  delay(900);
+  digitalWrite(13, LOW);
+  delay(100);
+}
+```
+
+그럼 LED가 깜빡인다!!
+
+> 숙제
+>
+> LED 3개를 다른 주기로 깜빡이게 하기.
+
+<img src='./images/빵판-led-3.jpg' width=500>
+
+빵판의 최상단 길게 행으로 연결된 곳에 GND를 넣어서 받게 했다. 
+
+```c++
+void setup() {
+  pinMode(13, OUTPUT);
+  pinMode(12, OUTPUT);
+  pinMode(11, OUTPUT);
+
+}
+
+void loop() {
+  digitalWrite(13, HIGH);
+  delay(900);
+  digitalWrite(13, LOW);
+  delay(100);
+  digitalWrite(12, HIGH);
+  delay(90);
+  digitalWrite(12, LOW);
+  delay(10);
+  digitalWrite(11, HIGH);
+  delay(500);
+  digitalWrite(11, LOW);
+  delay(500);
+}
+```
+
+이제 빵판을 어떻게 쓰는지 알겠슴다. 
+
+## lesson 04 - 변수
+
+. . . ㅡ ㅡ ㅡ . . .
+
+위의 모스부호는 SOS를 의미한다. 
+이걸 LED로 나타내는 방법은 간단하다. 
+
+루프 함수 안에 다 - 넣어주면 된다.
+
+```c++
+digitalWrite(8, HIGH);
+delay(50);
+digitalWrite(8, LOW);
+delay(50); // 이걸 3번 반복해서 쓰고,
+// ...
+digitalWrite(8, HIGH);
+delay(500);
+digitalWrite(8, LOW);
+delay(50); // 이것도 3번 반복
+// ...
+digitalWrite(8, HIGH);
+delay(50);
+digitalWrite(8, LOW);
+delay(50); // 또 3번
+// ...
+```
+
+넘나 비효율적이다. 
+
+```c++
+int led = 8;
+int st = 100;
+int lg = 500;
+int tm = 150;
+int looptm = 1000;
+
+void shortSignal() {
+  digitalWrite(led, HIGH);
+  delay(st);
+  digitalWrite(led, LOW);
+  delay(tm);
+}
+
+void longSignal() {
+  digitalWrite(led, HIGH);
+  delay(lg);
+  digitalWrite(led, LOW);
+  delay(tm);
+}
+
+// setup(), loop() 함수전에 필요한 애들을 먼저 정의하고, 함수안에서는 가져다 쓰기만 한다.
+void setup() {
+  pinMode(led, OUTPUT);
+}
+
+void loop() {
+  shortSignal();
+  shortSignal();
+  shortSignal();
+  longSignal();
+  longSignal();
+  longSignal();
+  shortSignal();
+  shortSignal();
+  shortSignal();
+  
+  delay(looptm);
+}
+```
+
+- setup(), loop() 안에서 쓸 값, 함수는 밖에서 미리 정의를 하자.
