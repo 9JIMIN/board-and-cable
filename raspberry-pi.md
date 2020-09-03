@@ -31,3 +31,13 @@ SD를 부팅디스크로 만들고, 라즈베리파이 뒷판에 연결부에 �
 
 ```
 
+
+
+### 커널 빌드
+
+[공식 커널빌드 문서](https://www.raspberrypi.org/documentation/linux/kernel/building.md)
+위의 자료에 모든 내용이 담겨 있다. 꼭 다시 보자.
+
+
+
+​                        
