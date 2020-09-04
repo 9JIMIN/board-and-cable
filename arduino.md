@@ -344,63 +344,6 @@ void loop() {
 그냥 1~15를 0001, 1111까지 배열에 저장해서 해도 되지만, 난 직접 이진법으로 변환을 하고 싶었다. 
 
 근데 C언어가 익숙하지 않아서, 완성하지 못했다. 
-
-아래는 실패한 코드..
-
-```c++
-int decimal[15] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
-int bin[15][4];
-int pin = 8;
-
-void setup() {
-  for (int i = 0; i < 15; i++) {
-    int binary[4];
-    int count = 0;
-    while (1) {
-      binary[i] = decimal[i] % 2;
-      decimal[i] = decimal[i] / 2;
-      count ++;
-
-      if (decimal[i] == 0) {
-        break;
-      }
-    }
-    int rev[4] = {0, };
-    int r = 0;
-    for (int j = count; j >= 0; j--) {
-      rev[r] = binary[j];
-      r++;
-    }
-
-    for (int p = 0; p < 4; p++) {
-      bin[i][p] = rev[p];
-    }
-  }
-  for (int k = 0; k < 4; k++) {
-    pinMode(pin + k, OUTPUT);
-  }
-  
-}
-
-void loop() {
-  for (int t = 0; t < 15; t++) {
-    for (int j = 0; j < 4; j++) {
-      if (bin[t][j] == 1) {
-        digitalWrite(pin + j, HIGH);
-      } else {
-        digitalWrite(pin + j, LOW);
-      }
-    }
-    delay(500);
-    for (int g = 0; g < 4; g++) {
-      digitalWrite(pin + g, LOW);
-    }
-    delay(500);
-  }
-}
-```
-
-시간을 너무 많이 써서 그냥 넘어가기로 했다.
 나중에는 꼭 직접 인풋을 받아서, 변환한 바이너리를 출력하는 완성도 있는 애를 만들어보자!
 
 아래는 바이너리 값을 다 저장해서 만든 프로그램.
@@ -518,3 +461,191 @@ Pulse Width Modulation(펄스- 폭 - 변조)
 
 > 아두이노에 analogWrite는 키고 끄고를 반복해서 사이값을 만들어내는 것이다. 
 > 콘덴서, 케퍼시터는 이런 반복을 부드럽게 바꿔준다.
+
+
+
+## lesson 09 - 옴의 법칙
+
+물의 흐름에 비유를 하자면, 
+전압은 수압, 물의 압력이고.
+전류는 흐르는 물이라고 볼 수 있다. 
+
+그래서 회로도에서 v 부분은 펌프정도로 생각하면 된다. 
+압력이 높으면(볼트가 높으면), 물이(전기가) 많이 흐른다. 
+
+그리고 저항은 물이 흐르는 파이프의 관을 좁히는 장애물로 볼 수 있다. 
+당연히 파이프가 좁아지니 물은 덜 흐르게 되고, 압력은 높아질 수 밖에 없다. 
+
+이것이 옴의 법칙이다.
+물의 흐름으로 생각해보면, 아주 당연한 **3가지 값의 관계**이다.  
+
+```
+전압 = 전류 * 저항
+// V = IR
+```
+
+그래서 회로에서 두 가지값을 알면 나머지 한 값을 알 수 있다.
+
+> 전류는 + 에서 나온다. 
+> 근데 전자는 - 에서 나온다. 
+
+직렬로 저항이 연결되어 있으면, 
+그냥 두 저항을 더하면 된다.
+그럼 전체 회로에 흐르는 전류가 나온다. 
+
+그리고 각각의 저항에 걸리는 전압을 그 저항*전류 로 구할 수 있다. 
+그리고 그 두 전압을 더하면, 총 전압이 나온다.   
+
+이걸 전압계로 측정할 수 있다. 
+빵판에 직접 저항 두개로 간단한 회로를 만든다. 
+
+> 아두이노에는 항상 5v 를 공급하는 핀이 있으니 거기에 연결하면 됨.
+
+그리고 전압계를 회로 사이 적절하게 꽃아주면 계산한 전압값을 실제로 볼 수 있다.
+
+> 한 회로 안에서 전류는 일정한데, 전압이 다르다는 것은 뭔가 이상하게 들린다. 
+> 다시, 물의 흐름에 비유하자면, 흐르는 물의 양은 일정하지만, 관이 좁아지고 넓어지고에 따라서 구간마다 수압이 달라지는 것으로 비유할 수 있다. 
+
+## lesson 10 - analogRead
+
+digitalWrite, analogWrite 모두 아두이노에게 신호를 보내기만 했다. 
+이번에는 반대로 아두이노로부터 신호를 읽어들이는 것에 대해서 알아본다.
+
+값을 읽을 때는 A1~5 핀을 써야한다.
+그리고 출력값은 실제전압은 아니다.
+
+실제 전압이 0 이면 0,
+5면 1023이 나온다. 
+
+일단, 아래와 같이 코딩을 해서 출력값을 보자.
+
+```c++
+int readPin = A3;
+int V2 = 0;
+int delayTime = 500;
+
+void setup() {
+  pinMode(readPin, INPUT);
+  Serial.begin(9600);
+}
+
+void loop() {
+  V2 = analogRead(readPin);
+  Serial.println(V2);
+  delay(delayTime);
+}
+```
+
+모니터를 열면, 전압의 정확한 값이 나오는 게 아니라.
+0 - 5 사이를 1023로 나눠져 있고, 측정값을 그 사이에 놓았을 때 대응하는 수가 출력되는 것이다. 
+
+> 아두이노는 (2^10)인, 10bit로 결과를 출력할 수 있다.  0~ 1023
+
+즉, 나온값을 1023으로 나누고, 5를 곱하면 전압을 구할 수 있다. 
+
+```c++
+int readPin = A3;
+int readVal;
+float V2 = 0;
+int delayTime = 500;
+
+void setup() {
+  pinMode(readPin, INPUT);
+  Serial.begin(9600);
+}
+
+void loop() {
+  readVal = analogRead(readPin);
+  V2 = (5./1023.)*readVal;
+  Serial.println(V2);
+  delay(delayTime);
+}
+```
+
+```c++
+V2 = (5./1023.)*readVal;
+```
+
+5/1023을 하면 `int`로 계산을 해버려서 `V2`는 항상 0 이 되버린다. 
+그래서 소수가 나올 수 있도록 소수끼리 나눠주는 것이다. ( 숫자 끝에 쩜을 더해주면 float로 인식을 한다.)
+
+그리고 모니터를 보면 계산된 전압값이 나온다. 
+
+> 아두이노로 전압을 읽는 것을 배웠다. 
+
+## lesson 11 - Serial.print
+
+핀을 쓰기 위해서는 pinMode() 를 setup() 에서 불러줘야한다. 
+Serial모니터를 쓰기위해서도 setup()에서 불러줘야 한다. 
+
+설정은 `baud rate`라고 하는 통신속도를 정해주면 된다.
+중요한건, 코드에서 정한 속도하고, 모니터의 속도가 일치해야한다.
+
+```c++
+int j = 1;
+int waitT = 750;
+String myString = "j = ";
+
+void setup() {
+    // Serial.begin(baud rate) => 시리얼 통신 속도이다. 
+  Serial.begin(9600);
+}
+
+void loop() {
+  // print() 는 줄바꿈을 안한다. println() 은 출력하고 줄을 바꾼다.
+  Serial.print(myString);
+  Serial.println(j); 
+  j = j + 1;
+  delay(waitT);
+
+}
+```
+
+- 함수에서 쓸 값은 초기에 변수에 저장한다. 
+- 보기좋게 출력을 한다.
+
+```c++
+int j = 1;
+int waitT = 750;
+float area;
+float pi = 3.14;
+float r = 2;
+String m1= "A Circle With Radius ";
+String m2 = " Has a Area of ";
+String m3 = ".";
+
+void setup() {
+  Serial.begin(19200);
+}
+
+void loop() {
+  area = pi * r * 2;
+  Serial.print(m1);
+  Serial.print(r);
+  Serial.print(m2);
+  Serial.print(area);
+  Serial.println(m3);
+  delay(waitT);
+  r = r + .5;
+}
+```
+
+```
+시리얼 모니터
+A Circle With Radius 96.50 Has a Area of 606.02.
+A Circle With Radius 97.00 Has a Area of 609.16.
+A Circle With Radius 97.50 Has a Area of 612.30.
+...
+```
+
+## lesson 12 - Potentiometers
+
+Potentiometers = 가변저항
+말 그래로 값이 고정되지 않고 바꿀 수 있는 저항이다. 다리가 3개인 것이 특징.
+
+원리는 그림을 보면 한방에 이해된다. [네이버 블로그의 설명](https://m.blog.naver.com/haneham/221235789444)
+
+최대 저항값이 아두이노 킷에 있는 거는 10,000옴이다. 0~10K 까지 조절가능.
+
+3개 다리를 빵판에 연결하고 LED를 넣어서 밝기 조절이 되게 만들 수 있다. 
+그리고 11강에서 배운대로 하면, LED에 걸리는 전압도 모니터로 볼 수 있다. 
