@@ -574,7 +574,7 @@ V2 = (5./1023.)*readVal;
 핀을 쓰기 위해서는 pinMode() 를 setup() 에서 불러줘야한다. 
 Serial모니터를 쓰기위해서도 setup()에서 불러줘야 한다. 
 
-설정은 `baud rate`라고 하는 통신속도를 정해주면 된다.
+`setup()`설정은 `baud rate`라고 하는 통신속도를 정해주면 된다.
 중요한건, 코드에서 정한 속도하고, 모니터의 속도가 일치해야한다.
 
 ```c++
@@ -650,7 +650,7 @@ Potentiometers = 가변저항
 
 ## lesson 13, 14 - if
 
-아두이노에는  ground 핀이 3개 였음. A~ 있는데 하나더 있더라. 
+아두이노에는  ground 핀이 3개 였음.
 
 이번 시간에는 if를 배우기 위해서 지난 시간에 배운 가변저항을 이용했다. 
 가변저항을 조절하면서 전압에 따라 서로 다른 LED가 켜지게 하는 방식.
@@ -676,6 +676,8 @@ if(a>2 && a<5){
 - 마지막 다리는 Ground 연결한다.
 
 읽은 전압에 따라서 red, yel, gre이 켜지는 회로
+
+> 저항 한개를 3개에 연결하는 참신한 방법!
 
 <img src = './images/삼단계.jpg' width = 400>
 
@@ -830,10 +832,227 @@ void loop() {
 
   while (readValue > 1000) {
     digitalWrite(pin, HIGH);
-    readfn();
+    readfn(); // 루프 안에서 조건이 되는 값(readValue)을 업데이트 해줘야한다.
   }
   digitalWrite(pin, LOW);
 }
 
+```
+
+## lesson 18, 19 - Read from Serial
+
+지금까지는 가변저항으로부터 데이터를 읽었다. 
+이번 시간에는 Serial 모니터로 부터 데이터를 읽는 방법에 대해서 배운다. 
+읽는 방법은 3단계로 나뉜다. 
+
+- ask
+
+```
+Serial.println("질문");
+```
+
+- wait
+
+```c++
+while(Serial.available()==0){
+    // 입력값이 없을때는 여기서 루프돌면서 대기
+}
+```
+
+- read
+
+```c++
+Serial.parseInt();
+Serial.parseFloat();
+Serial.readString(); // parseString이 아님에 주의
+// 값을 읽는다.
+```
+
+> Ask => Wait => Read 
+> 시리얼 모니터로 입력값을 받는 방법 꼭 기억!
+
+아래와 같이 숫자를 입력받아 출력하는 프로그램을 만들 수 있다.
+
+```c++
+int n;
+String msg = "Please enter you number: ";
+String msg2 = "your number is: ";
+void setup() {
+  Serial.begin(9600);
+}
+
+void loop() {
+  Serial.println(msg);
+  while (Serial.available() == 0) {
+    // Do nothing.
+  }
+  n = Serial.parseInt();
+  Serial.print(msg2);
+  Serial.println(n);
+}
+```
+
+그리고 간단한 회로를 구성해서 입력한 숫자만큼 깜빡이는 LED를 만들 수 있다. 
+
+```c++
+int pin = 8;
+int n;
+String msg = "How may blinks do you want?";
+int wait = 100;
+
+void setup() {
+  pinMode(pin, OUTPUT);
+  Serial.begin(9600);
+}
+
+void loop() {
+  Serial.println(msg);
+  while (Serial.available() == 0) {
+    // Do nothing.
+  }
+  n = Serial.parseInt();
+  for (int i = 0; i < n; i++) {
+    digitalWrite(pin, HIGH);
+    delay(wait);
+    digitalWrite(pin, LOW);
+    delay(wait);
+  }
+}
+```
+
+받은 문자열에 맞는 LED를 키는 코드, 회로
+
+```c++
+int pin1=8;
+int pin2=9;
+int pin3=10;
+String input;
+
+void setup() {
+  pinMode(pin1, OUTPUT);
+  pinMode(pin2, OUTPUT);
+  pinMode(pin3, OUTPUT);
+  Serial.begin(9600);
+}
+
+void loop() {
+  digitalWrite(pin1, LOW);
+  digitalWrite(pin2, LOW);
+  digitalWrite(pin3, LOW);
+  Serial.println("Which LED you want to ON?(red, yellow, blue)");
+  while(Serial.available()==0){}
+  input = Serial.readString();
+  if(input=="red"){
+    digitalWrite(pin1, HIGH);
+  }
+  if(input=="yellow"){
+    digitalWrite(pin2, HIGH);
+  }
+  if(input="blue"){
+    digitalWrite(pin3, HIGH);
+  }
+  delay(1000);
+}
+```
+
+## lesson 20, 21 - RGB LED
+
+두 개가 아닌, 4개의 다리가 있다. 
+R, G, B, Ground 핀이다.
+
+각 핀 연결을 하면 빨간색, 초록색, 파란색 빛을 낸다.
+한 LED로 3가지 신호를 다르게 보여줄 수 있다는 장점이 있다. 
+
+또한 analogWrite로 값을 잘 조절하면, 색을 섞을 수도 있다.
+
+## lesson 22, 23, 24 - Buzzer
+
+ 버저는 두가지 종류가 있다. 
+
+- active buzzer
+  전원만 넣어주면 자동으로 소리가 출력된다.
+
+- pessive buzzer
+
+  내장된 회로가 없어서, 아두이노의 tone함수로 제어를 하던가 delay를 주기적으로 줘서 소리를 내게 해야한다.
+
+버저에 보면, +부분이 있다. 
+여기에 핀이 연결되도록하고, 반대부분은 ground에 연결하면 된다. 
+
+analogWrite로 해서 5 정도로 설정하면 들을 만하다. 그냥 digitalWrite로 해서 255전압이 풀로 흐르면 시끄러움. 
+
+가변저항으로 값을 읽어서, 일전 전압이 넘어가면 버저가 울리도록 하는 회로 만들기
+
+```c++
+int readPin = A5;
+int buzzerPin = 9;
+int value;
+
+void setup() {
+  pinMode(readPin, INPUT);
+  pinMode(buzzerPin, OUTPUT);
+  Serial.begin(9600);
+}
+
+void loop() {
+  value = analogRead(readPin);
+  Serial.println(value);
+  while (value > 1000) {
+    value = analogRead(readPin);
+    analogWrite(buzzerPin, 5);
+  }
+  analogWrite(buzzerPin, 0);
+  delay(50);
+}
+```
+
+그리고 중간에 짧은 딜레이를 넣어서 톤을 조절할 수도 있다. 
+
+```c++
+analogWrite(buzzerPin, 5);
+delay(10);
+analogWrite(buzzerPin, 0);
+delay(10);
+```
+
+패시브 버저는 바닥이 초록색이다. 
+근데 왜 내 키트에는 없지..
+
+암튼 패시브 버저는 우리가 수동으로 떨어줘야한다. 
+위의 코드처럼 중간에 딜레이를 넣는데, digitalWrite로 해도 된다. 
+
+딜레이 시간을 늘릴 수록 소리가 낮아진다.
+
+```c++
+delayMicroseconds(1000) == delay(1)
+// 마이크로 딜레이도 있으니 이걸로 더 높은 소리를 만들 수 있다. 
+```
+
+숙제.
+가변저항의 전압에 따라, 딜레이를 바꿔주는 회로 만들기
+
+전압이 높아질수록 딜레이 시간이 커지면서 삑-- 삑-- 하고,
+전압이 낮아지면, 딜레이 시간이 짧아지면서 삑삑삑삑 함.
+
+```c++
+int readPin = A5;
+int buzzerPin = 9;
+int value;
+
+void setup() {
+  pinMode(readPin, INPUT);
+  pinMode(buzzerPin, OUTPUT);
+  Serial.begin(9600);
+}
+
+void loop() {
+  value = analogRead(readPin);
+  Serial.println(value);
+  int com = (1000. / 1023.) * value;
+  analogWrite(buzzerPin, 5);
+  delay(com);
+  analogWrite(buzzerPin, 0);
+  delay(com); 
+}
 ```
 

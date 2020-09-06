@@ -50,6 +50,15 @@ pi@raspberrypi: ~ $
 
 ## lesson 03~06
 
+리눅스 명령어는
+
+- What: 뭐를
+- Where: 어디서
+
+이 두가지를 잘 줘야한다. 
+
+
+
 ### 네비게이션
 
 내가 어디있고, 여기엔 뭐가 있는지를 알아보는 명령어들.
@@ -164,6 +173,8 @@ Desktop    Downloads  Pictures  rpi_kernel_src  Videos
 
 그리고 파일 내용을 읽는 것은 `cat <파일명>`
 
+> concatenate : "여러개를 연결하다" 에서 온것이 **cat**
+
 ```shell
 jimin@fossa:~/Desktop$ nano test.txt
 # 편집기에서 내용을 넣는다. 
@@ -193,7 +204,165 @@ apple
 
 
 
+## lesson 07~12
 
+### wildcard
+
+\*
+
+만약에 특정 디렉토리에 `jimin1.txt`, `jimin2.txt`, `jimin3.txt` .. 이런 파일들이 가득하다고 하자. 
+그리고 이 모든 파일을 다른 디렉토리로 옮기고 싶을때.
+
+```shell
+$ mv jimin1.txt ../test2
+$ mv jimin2.txt ../test2
+...
+```
+
+이렇게 하는 건 너무 귀찮다. 
+
+이때 쓰는게 와일드 카드이다. 
+
+```shell
+$ mv jimin*.txt ../test2
+```
+
+이렇게 하면, `jimin<뭐든>.txt` 파일 전부 한방에 명령이 적용된다. 
+
+특정 디렉토리에 있는 파일을 전부 옮기고 싶다면?
+
+```shell
+$ mv ../test2/*.txt .
+# test2에 있는 txt파일 전부를 현재 디렉토리로 옮긴다. '.'은 현재 디렉토리를 뜻함.
+
+$ cp ../test2/*.txt .
+# test2에 있는 txt파일 전부를 현재 디렉토리에 복사한다.
+
+$ cp ../test2/*.* .
+$ cp ../test2/* .
+# 파일형식에 상관없이 모든 파일을 복사
+```
+
+```shell
+$ nano test.py
+# 코드 작성...
+$ python3 test.py
+# => 코드 실행됨.
+```
+
+### command output to files
+
+\>, >>
+
+```shell
+$ touch test/jimin.txt
+# 해당 파일을 만든다.  
+# nano는 편집을 해서 만드는데, 이건 그냥 텅빈 파일을 바로 만들어준다.
+```
+
+```shell
+jimin@fossa:~/Desktop$ mkdir command
+jimin@fossa:~/Desktop$ ls
+command  repo  test  메모
+jimin@fossa:~/Desktop$ ls test
+jimin.txt  jimin1.txt  jimin2.txt  jimin3.txt
+jimin@fossa:~/Desktop$ ls test>command/dir.txt
+jimin@fossa:~/Desktop$ ls command
+dir.txt
+jimin@fossa:~/Desktop$ cat command/dir.txt
+jimin.txt
+jimin1.txt
+jimin2.txt
+jimin3.txt
+# ls test>command/dir.txt
+# ls test 명령의 결과가 command/dir.txt에 담긴다. 
+```
+
+```shell
+$ [명령]>[결과를 저장할 파일]
+```
+
+이렇게 해서, 명령의 결과를 파일에 저장할 수 있다. 
+
+근데, 그 파일에 더 쓰고 싶다면?
+똑같이 >를 써서 같은 파일에 넣으면, 덮어쓰게 된다. 
+
+그때는 >>를 쓰면 내용추가가 된다. 
+
+```shell
+jimin@fossa:~/Desktop/test$ ls
+jimin1.txt  jimin2.txt
+jimin@fossa:~/Desktop/test$ ls> ../command/dir.txt
+jimin@fossa:~/Desktop/test$ cat ../command/dir.txt
+jimin1.txt
+jimin2.txt
+# > 덮어쓰기
+jimin@fossa:~/Desktop/test$ ls>> ../command/dir.txt
+jimin@fossa:~/Desktop/test$ cat ../command/dir.txt
+jimin1.txt
+jimin2.txt
+jimin1.txt
+jimin2.txt
+# >> 추가하기
+
+```
+
+> 여러가지 명령의 결과를 파일에 저장하는 방법을 배웠다.
+>
+> \> 는 override
+> \>>는 append
+
+### sort
+
+```shell
+$ sort [파일]
+# 파일내용 줄단위로 알파벳순으로 정렬한 내용을 출력
+
+$ sort -r [파일]
+# 역순으로 정렬
+```
+
+```shell
+jimin@fossa:~/Desktop/test$ nano my.txt
+jimin@fossa:~/Desktop/test$ sort my.txt
+asdf
+bsdf
+csdf
+xsdf
+zsdf
+jimin@fossa:~/Desktop/test$ cat my.txt
+zsdf
+xsdf
+asdf
+csdf
+bsdf # 원본 내용은 그대로..
+# 만약 정렬한 내용을 저장하고 싶으면 아까배운 >를 쓰면 됨.
+```
+
+```shell
+$ sort jimin.txt>./sortedfile.txt
+# 정렬한 내용을 새로운 파일에 저장.
+```
+
+```shell
+$ sort -n test.txt
+# 오름차순으로 정렬
+$ sort -r -n test.txt
+# 내림차순으로 정렬
+$ sort -M test.txt
+# 날짜 january, february.. 순으로 정렬, 근데 이런거 쓸 일 아예 없을 듯..
+```
+
+### 경로 이름 심화
+
+```
+/ 는 루트 폴더
+~ 는 home/사용자 폴더
+. 는 현재 폴더
+.. 윗 폴더
+```
+
+ 
 
 # 기타
 
