@@ -204,7 +204,7 @@ apple
 
 
 
-## lesson 07~12
+## lesson 07~16
 
 ### wildcard
 
@@ -362,7 +362,91 @@ $ sort -M test.txt
 .. 윗 폴더
 ```
 
- 
+ ### pipe, tee
+
+|, |tee
+
+리눅스 커맨드는 인풋을 받고 아웃풋을 내준다. 
+파이프는 첫 커맨드의 아웃풋을 다음 커맨드의 인풋으로 넣어준다. 
+
+```shell
+$ cat jimin.txt
+c
+b
+a
+$ cat jimin.txt|sort
+a
+b
+c
+# 이건 그냥 sort jimin.txt해도 같지만, 
+# 암튼, [아웃풋이 있는 명령]|[인풋을 받는 명령] 
+# 이렇게 작성을 해서, 말그래도 파이프처럼 결과를 이어서 명령을 줄 수 있다. 
+```
+
+파이프가 한 군데에 아웃풋을 보낸다면, tee는 여러곳으로 보낸다.
+
+[여기 자세한 설명](https://www.lesstif.com/lpt/linux-tee-89556049.html)
+
+```shell
+$ echo "hello" | tee hello.txt
+# hello.txt파일에 echo의 아웃풋은 hello가 기록된다.
+
+$ ls / > file1.txt
+# > 는 아웃풋을 파일에 저장시켜준다.
+
+$ ls ~ |tee file1.txt file2.txt file3.txt
+Android
+Arduino
+Desktop
+...
+# tee는 인풋을 읽어서, 아웃풋을 화면에 출력함과 동시에 파일에 쓰는 역할을 한다.
+# 화면과 파일에 동시 출력하고 싶을때 쓰는 명령어이다.
+
+$ ls / |tee file1.txt
+bin
+boot
+..
+# 내용이 있는 파일에 tee를 하면 override가 된다. 
+# append를 하기 위해서는 -a 플래그를 추가한다. 
+$ ls / |tee file1.txt -a
+```
+
+### find, grep
+
+```shell
+$ find [어디서부터찾을 것인지] -name "[찾을파일 또는 디렉토리]"
+$ find ~ -name "test.txt"
+/home/jimin/Desktop/test.txt
+# 사용자 디렉토리부터 탐색해서 test.txt를 찾고, 경로를 출력한다. 
+
+$ find ~/Desktop/repo -name "*.py"
+# repo 경로안 모든 py파일을 찾음.
+
+$ find . -name "*.py">./test/allpy.txt
+# 현재 디렉토리부터 모든 파이썬 파일을 찾아서 출력된 경로를 텍스트로 저장
+
+$ sudo find / -name "ruby*"
+# 루트부터 찾을때는 sudo를 해줘야 "허가거부"가 안남.
+# 모든 ruby~~ 를 찾는다. 
+```
+
+만약에 파일내용 중에 찾고 싶은게 있다면?
+
+그때는 grep
+
+```shell
+$ grep [-r를 하면 재귀적으로] [찾을내용] [어디서부터]
+$ grep jimin ./test.txt
+# test.txt파일에서 jimin이라는 내용을 찾아서 출력
+# 이런 거는 별 의미없음.
+# 만약에 /home폴더의 모든 파일에 대해서 jimin이라는 내용 찾고 싶다면?
+$ grep -r jimin /home
+./Desktop/repo/test.txt: jimin ...
+..
+# -r 플래그를 추가하면 재귀적으로 모든 디렉토리 파일에 대해서 찾을 수 있음
+```
+
+
 
 # 기타
 

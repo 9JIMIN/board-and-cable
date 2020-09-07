@@ -1056,3 +1056,316 @@ void loop() {
 }
 ```
 
+## lesson 25, 26 - photoresistor
+
+포토센서의 원리
+
+LED를 먼저 이해해야한다. 
+초반에 본 것 처럼 LED의 재료가 되는 실리콘은 순수하게는 전기가 흐르지 않는다. (저항이 겁나 크다.)
+
+근데 여기에 광자가 쏴주면?
+**valence밴드에 있는 전자가 conduction밴드로 뛰어오른다.**
+
+그럼 전류를 흐르게 할 conduction밴드의 저항과 valence밴드의 구멍이 생기고, 
+저항은 낮아지게 된다. 
+
+광자를 더 쏴주면(빛을 더 주면)
+저항은 더더 낮아진다.
+
+그게 포토센서 photoregister의 원리이다.
+
+> 어두우면 저항이 커지고, 밝으면 낮아짐. 
+> 빛에 따라 저항이 변함.
+>
+> 원리를 잘 생각하자.
+
+포토레지스터와 저항을 연결하고, 그 사이의 전압을 측정하는 회로를 구성한다. 
+
+``` c++
+int pin = A0;
+int value;
+
+
+void setup() {
+  // put your setup code here, to run once:
+  pinMode(pin, INPUT);
+  Serial.begin(9600);
+}
+
+void loop() {
+  // put your main code here, to run repeatedly:
+  value = analogRead(pin);
+  Serial.println(value);
+  delay(100);
+}
+```
+
+그럼 빛의 양에 따라 변하는 전압을 볼 수 있다. 
+
+- 밝으면=> 저항이 작아지고=> 전류가 잘 흘러서 => 전압이 커진다.
+- 어두우면=> 저항이 커지고 => 전류가 잘 안흐르고 => 전압이 작아진다.
+
+```
+이게 잘 이해가 안갈 수 있는데, 
+전체 회로에서 흐르는 전류의 양은 고정되어있다. 
+근데, 특정부분에서 저항이 작아지면, I=V/R에 의해 전압값이 상승하는 것이다. 
+```
+
+숙제. 
+빛의 양에 따라서 다른 LED를 켜기.
+
+위에 있는 전압을 읽는 회로에 따로, LED 회로를 구성해서 읽을 값에 따라 지정한 LED를 켜준다.
+
+```c++
+int readlight = A0;
+int pin1 = 8;
+int pin2 = 9;
+int value;
+
+void setup() {
+  pinMode(readlight, INPUT);
+  pinMode(pin1, OUTPUT);
+  pinMode(pin2, OUTPUT);
+  Serial.begin(9600);
+}
+
+void loop() {
+  value = analogRead(readlight);
+  Serial.println(value);
+
+  if(value>700){ // analogRead에서 읽은거니까, 0~1023의 값, 전압에 비례한다.
+    digitalWrite(pin1, HIGH);
+    digitalWrite(pin2, LOW);
+  }
+  if(value<700){
+    digitalWrite(pin1, LOW);
+    digitalWrite(pin2, HIGH);
+  }
+  delay(100);
+}
+```
+
+또 하나의 숙제, 
+
+어두워지면, 밝게 비춰주는 LED만들기.
+계산이 필요하다. 
+
+방이 밝을때 analogRead로 읽은 값이 760 정도, 어두울때 320 정도 이다.
+그리고 밝을때 0, 어두울때 255의 값을 analogWrite로 주고 싶다. 
+
+줄값을 y, 읽을값을 x라고 하면 아래와 같은 식을 만들 수 있다.
+
+```
+y = -(255/320)*x + a
+```
+
+그리고, (760, 0)을 대입해서 a를 구한다. 
+
+```
+y = -0.7*x + 538
+```
+
+그렇게 완성한 코드, 
+어두우면 밝히고, 밝으면 어두워진다. 
+
+```c++
+int readlight = A0;
+int pin1 = 9;
+int pin2 = 10;
+float raw;
+float cal;
+
+
+void setup() {
+  // put your setup code here, to run once:
+  pinMode(readlight, INPUT);
+  pinMode(pin1, OUTPUT);
+  Serial.begin(9600);
+}
+
+void loop() {
+  // put your main code here, to run repeatedly:
+  raw = analogRead(readlight);
+  cal = -0.58 * raw + 441;
+  Serial.println(cal);
+
+  analogWrite(pin1, cal);
+  delay(100);
+}
+```
+
+## lesson 27, 28 - pushbutton
+
+버튼
+
+안누른 상태에서는 회로가 연결되지 않음.
+누르면 연결됨.
+
+0, 1이므로, 이런 상태를 읽는 것은 `analogRead`가 아닌 `digitalRead`를 쓰면 됨.
+
+- **pull up register**
+
+만약에 5v핀에 선-저항-버튼을 연결하고 여기에 read하는 핀을 연결.
+버튼을 누르기 전이면, 전류가 흐르지 않기에 전압이 떨어지지 않는다. 
+5v가 그대로 있다. 그래서 이 다리에 A핀을 연결해서 digitalRead로 읽을 수 있다. 5v가 흐르면 1, 보다 낮은 전압은 0
+
+버튼을 누르면 전류가 흐르고, 전압이 0이 되면서 digitalRead로 0이 읽힌다.
+
+> - 버튼을 누르면 0
+> - 안누르면 1
+
+- **pull down register**
+
+5v핀-버튼, 아까와 반대로 읽는 핀을 전압핀과 다른 다리에 연결한다. 
+그럼 버튼을 안눌러서 전류가 안흐르면 전압이 안읽혀서 0이 되고, 
+버튼을 누르면, 1이 된다. 
+
+pull up이랑, 반대임.
+read하는 선을 어디에 연결하냐 차이임. 
+
+숙제. pull up으로 연결해서 누르면 켜지는 LED 만들기.
+값을 읽어서 만들어야 함.
+
+읽는 방법은 5v-저항-버튼으로 가는 경로에..
+A핀의 케이블을 넣어주면 된다. 
+
+```c++
+int pin = 8;
+int readpin = A5;
+int value;
+
+void setup() {
+  // put your setup code here, to run once:
+  Serial.begin(9600);
+  pinMode(pin, OUTPUT);
+  pinMode(readpin, INPUT);
+}
+
+void loop() {
+  // put your main code here, to run repeatedly:
+  value = digitalRead(readpin); // 누르면 5v가 흐르면서 1, 때면 0, analogRead로 했으면 1023, 0이 되었을 거임.
+  Serial.println(value);
+  delay(100);
+
+  if(value==0){
+    digitalWrite(pin, HIGH);
+  }
+  if(value==1){
+    digitalWrite(pin, LOW);
+  }
+}
+```
+
+어려운 문제. 
+
+그럼 스위치를 누를때마다 키고 끄고의 상태가 바뀌도록 하려면 어떻게 코딩을 해야할까..
+
+- 현재 LED의 상태를 저장해야한다. 
+
+그래서 버튼을 눌러서 0을 받게 되면, 현재 LED상태에 따라 켜고 끄고의 상태를 변경하면 된다. 
+하지만, 이렇게만 생각하고 코딩하면 잘 안된다. 
+
+왜냐하면, 버튼을 누를때 0이 한번만 오는 것이 아니라, 보통 111111100111 이런식으로 꾹- 누르는 경우가 많다.
+그렇기에 이걸 고려안하면 깜빡깜빡 거리게 된다. 
+
+그래서 LED상태 뿐만 아니라, 지난번에 받은 value의 값도 저장해야한다. 
+그리고 현재 value가 0인데, 지난번에 받은 value가 1인 경우.
+
+즉, 11111에서 000이 나오는 그 때를 캐치해야한다.
+
+생각 좀 오래했다. 재밌네.
+
+> 버튼상태와 LED상태를 (State)를 모두 저장하는 것.
+> 이게 핵심!
+
+```c++
+int pin = 8;
+int readpin = A5;
+bool isLedOn = false;
+int newState;
+int oldState;
+
+void setup() {
+  Serial.begin(9600);
+  pinMode(pin, OUTPUT);
+  pinMode(readpin, INPUT);
+}
+
+void loop() {
+  newState = digitalRead(readpin);
+
+  if (oldState == 1 && newState == 0) {
+    if (isLedOn) {
+      isLedOn = false;
+      digitalWrite(pin, LOW);
+    }
+    else {
+      isLedOn = true;
+      digitalWrite(pin, HIGH);
+    }
+  }
+  oldState = newState;
+}
+```
+
+다른 문제, 
+
+2개의 버튼이 있다. 
+한 버튼을 꾹 누르고 있거나, 계속 누르면 LED가 점점 밝아지고, 
+다른 버튼은 반대로 어두워 진다.
+
+그리고, 0, 255에 도달하면, 경고 LED를 켜준다.
+
+> 몰랐던게 난 A1, A2 이것만 Read할 수 있는 줄 알았는데, 
+> A계열은 analogRead만 가능하고, 
+> digitalRead는 그냥 핀도 가능하더라. 
+>
+> A계열은 analogRead시에만 쓴다!
+>
+> OK?
+
+```c++
+int upBtn = 11;
+int downBtn = 10;
+int pin = 9;
+int upValue;
+int downValue;
+int light = 0;
+
+void setup() {
+  // put your setup code here, to run once:
+  pinMode(pin, OUTPUT);
+  pinMode(upBtn, INPUT);
+  pinMode(downBtn, INPUT);
+  pinMode(12, OUTPUT);
+  Serial.begin(9600);
+
+}
+
+void loop() {
+  // put your main code here, to run repeatedly:
+  analogWrite(pin, light);
+  upValue = digitalRead(upBtn);
+  downValue = digitalRead(downBtn);
+  if (upValue == 0) {
+    if (light < 255) {
+      light++;
+    } else {
+      digitalWrite(12, HIGH);
+      delay(10);
+      digitalWrite(12, LOW);
+    }
+  }
+  if (downValue == 0) {
+    if (light > 0) {
+      light--;
+    } else {
+      digitalWrite(12, HIGH);
+      delay(10);
+      digitalWrite(12, LOW);
+    }
+  }
+  delay(10);
+}
+```
+
