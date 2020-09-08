@@ -3,7 +3,7 @@
 - 위키 문서 [명령어 테이블](https://ko.wikipedia.org/wiki/%ED%8B%80:%EC%9C%A0%EB%8B%89%EC%8A%A4_%EB%AA%85%EB%A0%B9%EC%96%B4)
 - 위키 문서 [미디어 저장소](https://commons.wikimedia.org/wiki/Category:Unix_reference_cards?uselang=ko)
 
-## lesson 01~02
+## 1. 소개, 접속방법
 
 ### 소개
 
@@ -48,7 +48,7 @@ pi@raspberrypi: ~ $
 # 연결완료!
 ```
 
-## lesson 03~06
+## 2. 파일 시스템 명령어
 
 리눅스 명령어는
 
@@ -204,7 +204,7 @@ apple
 
 
 
-## lesson 07~16
+## 3. 명령어 심화
 
 ### wildcard
 
@@ -444,6 +444,48 @@ $ grep -r jimin /home
 ./Desktop/repo/test.txt: jimin ...
 ..
 # -r 플래그를 추가하면 재귀적으로 모든 디렉토리 파일에 대해서 찾을 수 있음
+```
+
+## 4. 유저 -21
+
+### 새로운 유저 추가하기
+
+home 디렉토리 안에 유저가 있다. 
+원래는 pi 하나밖에 없다. 내 우분투에는 jimin하나 밖에 없다. 
+
+여기가 내가 파일을 만들고, 작업을 하는 공간이다. 
+
+```shell
+pi@raspberrypi:/home $ sudo useradd earth -m -s /bin/bash -g users
+# -m: 디렉토리를 만들어라. -s: 기본 쉘 지정 -g: 유저그룹지정
+pi@raspberrypi:/home $ sudo passwd earth
+# 비번 지정
+
+pi@raspberrypi:~ $ sudo login
+# 그리고 계정-비번 입력
+earth@raspberrypi:~ $
+# 그럼 이렇게 pi에서 earth로 바뀜.
+# 이 유저는 sudo를 쓸 수 없음. 
+# 다른 유저의 파일을 열람할 수는 있지만, 편집할 수는 없음. cat은 되지만, nano는 안됨.
+earth@raspberrypi:~ $ logout
+pi@raspberrypi: ~$
+# logout하면 다시 pi로 돌아옴.
+pi@raspberrypi:/home $ sudo userdel earth
+# 이렇게 지우면 ls해도 아직 폴더가 남아있음.
+# 그래서 깔끔하게 지울려면 sudo userdel -r earth로 -r를 붙여줘야함.
+pi@raspberrypi:/home $ sudo userdel -r earth
+```
+
+### sudo권한 유저 추가하기
+
+pi같은 sudo를 쓸 수 있는 슈퍼유저를 만드는 방법
+
+```shell
+$ sudo adduser jimin
+# 비번입력, 그 뒤로도 뭐나오는데 무시해도됨.
+# 유저를 만들고 다음으로 권한을 부여해야함
+$ sudo usermod -a -G adm,dialout,cdrom,sudo,audio, .. 줄 권한을 선택
+# 그리고 sudo jimin으로 만든계정으로 sudo를 하면 됨. 
 ```
 
 

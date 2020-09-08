@@ -1105,11 +1105,7 @@ void loop() {
 - 밝으면=> 저항이 작아지고=> 전류가 잘 흘러서 => 전압이 커진다.
 - 어두우면=> 저항이 커지고 => 전류가 잘 안흐르고 => 전압이 작아진다.
 
-```
-이게 잘 이해가 안갈 수 있는데, 
-전체 회로에서 흐르는 전류의 양은 고정되어있다. 
-근데, 특정부분에서 저항이 작아지면, I=V/R에 의해 전압값이 상승하는 것이다. 
-```
+ 
 
 숙제. 
 빛의 양에 따라서 다른 LED를 켜기.
@@ -1194,7 +1190,7 @@ void loop() {
 }
 ```
 
-## lesson 27, 28 - pushbutton
+## lesson 27, 28, 29, 34 - pushbutton
 
 버튼
 
@@ -1256,6 +1252,30 @@ void loop() {
 }
 ```
 
+pull up버튼을 만들때, 5v에 연결해서 하는 방법말고, readpin으로 바로 연결할 수도 있다. 
+
+```c++
+
+void setup() {
+  // put your setup code here, to run once:
+  pinMode(8, INPUT);
+  digitalWrite(8, HIGH);
+  Serial.begin(9600);
+}
+
+void loop() {
+  // put your main code here, to run repeatedly:
+  int value = digitalRead(8);
+  Serial.println(value);
+}
+```
+
+> setup() 함수에 INPUT핀에 write를 하고 있다.  
+> 그리고 버튼의 한 다리는 핀8번에 나머지는 그라운드에 연결하고, 
+>
+> 모니터를 보면 안누르면 1, 누르면 0이 된다. 
+> read pin을 통해서 pull up을 만드는 간단한 방법이다. 
+
 어려운 문제. 
 
 그럼 스위치를 누를때마다 키고 끄고의 상태가 바뀌도록 하려면 어떻게 코딩을 해야할까..
@@ -1265,7 +1285,7 @@ void loop() {
 그래서 버튼을 눌러서 0을 받게 되면, 현재 LED상태에 따라 켜고 끄고의 상태를 변경하면 된다. 
 하지만, 이렇게만 생각하고 코딩하면 잘 안된다. 
 
-왜냐하면, 버튼을 누를때 0이 한번만 오는 것이 아니라, 보통 111111100111 이런식으로 꾹- 누르는 경우가 많다.
+왜냐하면, 버튼을 누를때 0이 한번만 오는 것이 아니라, 보통 111111100111 이런식으로 꾹- 눌러서, 0이 여러번 오는 경우가 많다.
 그렇기에 이걸 고려안하면 깜빡깜빡 거리게 된다. 
 
 그래서 LED상태 뿐만 아니라, 지난번에 받은 value의 값도 저장해야한다. 
@@ -1366,6 +1386,149 @@ void loop() {
     }
   }
   delay(10);
+}
+```
+
+## lesson 30, 31 - Servos
+
+일반 모터와 달리, 뱅뱅 도는게 아니라, 일정 각도만큼 움직이게 할 수 있는 것이 servo이다. 
+
+5v, GND에 연결을 위한 선이 필요하고, 명령을 받기위한 선이 하나더 필요하다. 
+서보에 보면, 갈색, 빨간색, 주황색 선이 있다. 
+
+- 갈색: Ground
+- 빨간색: 5V
+- 주황색: 신호 pin
+
+> 서보를 쓰기위해서는
+>
+> ```c++
+> #include <Servo.h>
+> Servo servo;
+> void setup(){
+>     servo.attach(9);
+> }
+> void loop(){
+>     servo.write(90); 
+> }
+> // 외부 라이브러리를 받고, 
+> // 서보를 만들어주고, 
+> // 그걸 setup에서 명령을 줄 핀에 attach
+> // 그리고 write함수로 0~180의 각도를 주면 된다.
+> ```
+
+포토센서와 같이 빛에 따라 각도가 변하는 회로를 만들어보았다. 
+
+```c++
+#include <Servo.h>
+int readPin = A5;
+int readValue;
+int calcValue;
+int servoPin = 9;
+int servoPos;
+Servo servo;
+
+void setup() {
+  // put your setup code here, to run once:
+  Serial.begin(9600);
+  pinMode(A5, INPUT);
+  pinMode(servoPin, OUTPUT);
+  servo.attach(servoPin);
+}
+
+void loop() {
+  // put your main code here, to run repeatedly:
+  readValue = analogRead(A5);
+  calcValue = 0.35*readValue-94.7;
+  Serial.println(calcValue);
+  servo.write(calcValue);
+}
+```
+
+## lesson 32, 33 - joystick
+
+조이스틱은 가변저항 2개와 스위치로 구성되어었다.
+
+총 5개의 핀이 있는데 각각
+
+- GND
+- 5V
+- VRX: x 방향 가변저항이 연결
+- VRY: y 방향
+- SW: 스위치 클릭
+
+연결은 암-수 와이어를 써야한다. 
+조이스틱의 움직임에 따른, VRX(0~1023), VRY(0~1023), SW(0, 1)의 값을 받아야하기에 
+전원연결을 위한 5v, ground 말고도 3개의 인풋을 위한 선이 필요하다. 
+
+x, y 두개는 아날로그 read=> A핀
+sw 하나는 디지털 read 핀에 연결한다. 
+
+```c++
+int xpin = A0;
+int ypin = A1;
+int spin = 8;
+int xval;
+int yval;
+int sval;
+int wait = 200;
+void setup() {
+  // put your setup code here, to run once:
+  Serial.begin(9600);
+  pinMode(xpin, INPUT);
+  pinMode(ypin, INPUT);
+  pinMode(spin, INPUT);
+  digitalWrite(spin, HIGH);
+}
+
+void loop() {
+  // put your main code here, to run repeatedly:
+  xval = analogRead(xpin);
+  yval = analogRead(ypin);
+  sval = digitalRead(spin);
+  delay(wait);
+  Serial.print("x:");
+  Serial.print(xval);
+  Serial.print(" y:");
+  Serial.print(yval);
+  Serial.print(" s:");
+  Serial.println(sval);
+}
+```
+
+위와 같은 코드로 조이스틱의 조작에 따른 값을 출력해서 볼 수 있다. 
+
+보통은 이걸로 서보모터를 조작한다. 
+근데, 내 서보모터는 두개 다 고장이네.. 새로 사야할듯.
+
+암튼 조이스틱은 하나의 스틱으로 3가지 신호를 줄 수 있기에 유용하다. 
+
+
+## lesson 35 - stepper motor
+
+서보 모터처럼 각도를 제어할 수 있는 모터이다. [두 모터의 차이](https://techgoogleblogger.blogspot.com/2019/01/difference-between-servo-motor-and.html)
+
+이름처럼 한 스텝이 몇 도를 돌아가는지를 제어할 수 있는 모터이다. 
+
+스태퍼모터를 쓰기 위해서는 전용드라이버를 연결해야한다. 
+
+전원을 위해 2개의 선
+조작을 위해 4개의 선이 필요하다. 
+
+```c++
+#include <Stepper.h>
+
+const int stepsPerRevolution = 200; // 360를 돌기위해 몇 스텝이 필요한지
+Stepper myStepper(stepsPerRevolution, 8, 9, 10, 11); // 클래스 생성자에는 스텝과 핀 4개를 전달.
+void setup() {
+  myStepper.setSpeed(60); // rpm, 분당 회전수가 들어간다. 60이면. 1분에 200*60 = 12000 스텝이 진행된다. 
+}
+void loop() {
+  myStepper.step(stepsPerRevolution); // 출력할 스텝수 200.
+  delay(100);
+
+  myStepper.step(-stepsPerRevolution);
+  delay(100);
 }
 ```
 
