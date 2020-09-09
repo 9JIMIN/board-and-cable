@@ -411,7 +411,7 @@ boot
 $ ls / |tee file1.txt -a
 ```
 
-### find, grep
+### find, grep, sed
 
 ```shell
 $ find [어디서부터찾을 것인지] -name "[찾을파일 또는 디렉토리]"
@@ -446,7 +446,18 @@ $ grep -r jimin /home
 # -r 플래그를 추가하면 재귀적으로 모든 디렉토리 파일에 대해서 찾을 수 있음
 ```
 
-## 4. 유저 -21
+파일 내용을 수정할때, sed
+자세한 설명은 ... [여기](https://mug896.github.io/sed-stream-editor/basics.html)
+
+만약 test.md파일내에 있는 모든 hello란 단어를 yes로 바꾸고 싶다면?
+
+```shell
+$ sed 's/hello/yes/' test.md
+```
+
+
+
+## 4. 유저, 권한
 
 ### 새로운 유저 추가하기
 
@@ -486,6 +497,58 @@ $ sudo adduser jimin
 # 유저를 만들고 다음으로 권한을 부여해야함
 $ sudo usermod -a -G adm,dialout,cdrom,sudo,audio, .. 줄 권한을 선택
 # 그리고 sudo jimin으로 만든계정으로 sudo를 하면 됨. 
+```
+
+### 파일, 폴더 권한
+
+권한 보기
+
+```shell
+$ ls -l
+합계 8
+drwxrwxr-x 8 jimin jimin 4096  9월  9 19:20 repo
+-rw-rw-r-- 1 jimin jimin    0  9월  9 23:06 test.txt
+drwxrwxr-x 5 jimin jimin 4096  9월  6 01:09 메모
+# -l 옵션은 폴더 및 파일의 자세한 정보를 보여준다. 
+# 정보에는 permission권한 관련 내용도 있다. 
+
+# 처음문자는 디렉토리인지 파일인지 나타낸다. 
+# 그리고 이어서 3묶음씩 3개의 정보가 온다. 
+# 1 = d: 디렉토리, -: 파일
+# 2,3,4 = read, write, execute: r, w, x 파일을 소유한 유저(pi)의 권한(-는 권한이 없다는 뜻)
+# 5,6,7 = read, write, execute: r, w, x 파일을 소유한 그룹의 권한
+# 8,9,10 =read, write, execute: r, w, x 외부자의 권한
+```
+
+```shell
+-rw-rw-r--
+# 그냥 만든 파일의 권한: 그룹 사용자가 수정가능
+-rw-r--r--
+# sudo .. 로 만든 파일: 그룹 사용자 수정불가
+# 수정을 위해서는 sudo nano를 해야함.
+```
+
+권한 수정
+
+```shell
+$ chmod [내용] [타겟파일]
+
+# d rwx rwx rwx = 이게 권한 내용이다. 
+# d 421 421 421 = 이렇게 숫자가 부여된다.  
+$ chmod 000 test.txt
+$ ls -l
+---------- : 이렇게 모두든 권한이 없는 파일이 만들어진다. 
+# r--r--r--: 이렇게 권한설정을 하고 싶다면?
+$ chmod 444 test.txt
+# rwxrw-r--: 이렇게는.. 
+$ chmod 764 test.txt
+# r-xr--rwx: 
+$ chmod 547 test.txt
+
+# 디렉토리의 권한
+# 똑같은데, 그냥 -r 만 더하면 됨. rm이랑 같음. 재귀적으로.. 라는 뜻.
+$ chmod 700 -r folder
+# -r 플래그는 재귀적으로 아래모두에 적용시킨다는 뜻임.
 ```
 
 

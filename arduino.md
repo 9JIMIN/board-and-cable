@@ -2,7 +2,7 @@
 
 
 
-## lesson 01 - 시작하기
+##   01. 시작하기
 
 **IDE설치, 설정**
 
@@ -83,7 +83,7 @@ void loop() {
 
 
 
-## lesson 02 - LED 이해하기
+##   02. LED 이해하기
 
 - 전구: 와이어에 전기가 흐르면 빨간 빛을 낸다. 더 흘려보내면 하얀 빛을 낸다.
   이건 빛을 내지만, 엄밀히 열을 낸다. 에너지 낭비가 심함. (95%가 열, 5%가 빛)
@@ -161,7 +161,7 @@ n-타입의 여분의 전자가 p-타입의 conduction밴드로 이동하고, �
 그리고 다이오드의 전압에 대해 전류는 제곱함수 그래프를 그린다. (전압이 높아질 수록, 흐르는 전류도 빠르게 커진다는 뜻.)
 그래서 높은 전압에 다이오드를 다이렉트로 연결하면 다이오드가 탈 수 있다.  
 
-## lesson 03 - 빵판
+##   03. 빵판
 
 **빵판의 구조**
 
@@ -239,7 +239,7 @@ void loop() {
 
 이제 빵판을 어떻게 쓰는지 알겠슴다. 
 
-## lesson 04 - 변수
+##   04. 변수
 
 . . . ㅡ ㅡ ㅡ . . .
 
@@ -313,7 +313,7 @@ void loop() {
 
 
 
-## lesson 05, 06 - 바이너리
+##   05, 06. 바이너리
 
 디지털 디바이스는 스위치의 집합, 켜지면 1, 꺼지면 0.
 음악, 색깔, 텍스트 모두 숫자로 바꿀 수 있다. 
@@ -401,7 +401,7 @@ void loop() {
 
 
 
-## lesson 07 - analogWrite
+##   07. - analogWrite
 
 지금까지 배운 아두이노 명령은,  LED를 켜고, 끄는 것이 전부였다.
 0 과 1, 즉 digitalWrite() 만 이용했다. 
@@ -429,7 +429,7 @@ void loop(){
 
 
 
-## lesson 08 - PWM
+##   08. PWM
 
 Pulse Width Modulation(펄스- 폭 - 변조)
 
@@ -460,7 +460,7 @@ Pulse Width Modulation(펄스- 폭 - 변조)
 
 
 
-## lesson 09 - 옴의 법칙
+##   09. 옴의 법칙
 
 물의 흐름에 비유를 하자면, 
 전압은 수압, 물의 압력이고.
@@ -502,7 +502,7 @@ Pulse Width Modulation(펄스- 폭 - 변조)
 > 한 회로 안에서 전류는 일정한데, 전압이 다르다는 것은 뭔가 이상하게 들린다. 
 > 다시, 물의 흐름에 비유하자면, 흐르는 물의 양은 일정하지만, 관이 좁아지고 넓어지고에 따라서 구간마다 수압이 달라지는 것으로 비유할 수 있다. 
 
-## lesson 10 - analogRead
+##   10. analogRead
 
 digitalWrite, analogWrite 모두 아두이노에게 신호를 보내기만 했다. 
 이번에는 반대로 아두이노로부터 신호를 읽어들이는 것에 대해서 알아본다.
@@ -569,7 +569,7 @@ V2 = (5./1023.)*readVal;
 
 > 아두이노로 전압을 읽는 것을 배웠다. 
 
-## lesson 11 - Serial
+##   11. Serial
 
 핀을 쓰기 위해서는 pinMode() 를 setup() 에서 불러줘야한다. 
 Serial모니터를 쓰기위해서도 setup()에서 불러줘야 한다. 
@@ -634,7 +634,7 @@ A Circle With Radius 97.50 Has a Area of 612.30.
 ...
 ```
 
-## lesson 12 - Potentiometers
+##   12. Potentiometers
 
 Potentiometers = 가변저항
 말 그래로 값이 고정되지 않고 바꿀 수 있는 저항이다. 다리가 3개인 것이 특징.
@@ -648,7 +648,7 @@ Potentiometers = 가변저항
 
 > 근데 아직도 전압을 측정할때, 어디에 꽃아야 되는 건지 이유를 잘 모르겠음.
 
-## lesson 13, 14 - if
+##   13, 14. if
 
 아두이노에는  ground 핀이 3개 였음.
 
@@ -739,7 +739,7 @@ void loop() {
 }
 ```
 
-## lesson 15, 16, 17 - loop
+##   15, 16, 17. loop
 
 빨간거 3번, 노란거 5번 깜빡이는 회로, 코드 짜기 
 
@@ -839,7 +839,7 @@ void loop() {
 
 ```
 
-## lesson 18, 19 - Read from Serial
+##   18, 19. Read from Serial
 
 지금까지는 가변저항으로부터 데이터를 읽었다. 
 이번 시간에는 Serial 모니터로 부터 데이터를 읽는 방법에 대해서 배운다. 
@@ -955,7 +955,7 @@ void loop() {
 }
 ```
 
-## lesson 20, 21 - RGB LED
+##   20, 21. RGB LED
 
 두 개가 아닌, 4개의 다리가 있다. 
 R, G, B, Ground 핀이다.
@@ -965,7 +965,7 @@ R, G, B, Ground 핀이다.
 
 또한 analogWrite로 값을 잘 조절하면, 색을 섞을 수도 있다.
 
-## lesson 22, 23, 24 - Buzzer
+##   22, 23, 24. Buzzer
 
  버저는 두가지 종류가 있다. 
 
@@ -1056,7 +1056,7 @@ void loop() {
 }
 ```
 
-## lesson 25, 26 - photoresistor
+##   25, 26. photoresistor
 
 포토센서의 원리
 
@@ -1102,8 +1102,10 @@ void loop() {
 
 그럼 빛의 양에 따라 변하는 전압을 볼 수 있다. 
 
-- 밝으면=> 저항이 작아지고=> 전류가 잘 흘러서 => 전압이 커진다.
-- 어두우면=> 저항이 커지고 => 전류가 잘 안흐르고 => 전압이 작아진다.
+전체 회로에 흐르면 전류는 일정하고, 저항에 따라 걸리는 전압이 달라진다. 
+
+- 밝으면=> 저항이 작아지고=> 전압이 커진다.
+- 어두우면=> 저항이 커지고 => 전압이 작아진다.
 
  
 
@@ -1190,7 +1192,7 @@ void loop() {
 }
 ```
 
-## lesson 27, 28, 29, 34 - pushbutton
+##   27, 28, 29, 34. pushbutton
 
 버튼
 
@@ -1389,7 +1391,7 @@ void loop() {
 }
 ```
 
-## lesson 30, 31 - Servos
+##   30, 31. Servos
 
 일반 모터와 달리, 뱅뱅 도는게 아니라, 일정 각도만큼 움직이게 할 수 있는 것이 servo이다. 
 
@@ -1445,7 +1447,7 @@ void loop() {
 }
 ```
 
-## lesson 32, 33 - joystick
+##   32, 33. joystick
 
 조이스틱은 가변저항 2개와 스위치로 구성되어었다.
 
@@ -1504,7 +1506,7 @@ void loop() {
 암튼 조이스틱은 하나의 스틱으로 3가지 신호를 줄 수 있기에 유용하다. 
 
 
-## lesson 35 - stepper motor
+## 35. stepper motor
 
 서보 모터처럼 각도를 제어할 수 있는 모터이다. [두 모터의 차이](https://techgoogleblogger.blogspot.com/2019/01/difference-between-servo-motor-and.html)
 
@@ -1531,4 +1533,65 @@ void loop() {
   delay(100);
 }
 ```
+
+## 36. tilt switch
+
+기울임에 따라 열리고 닫히는 스위치. 볼 스위치라고도 한다.
+내부에 작은 쇠구슬이 있어서, 세우면 두 다리가 연결되고, 눕히면 분리되는 단순한 구조이다. 
+
+회로를 연결해서 읽을때는 setup에 read핀에 digitalRead HIGH를 해줘야 한다. pushbutton참고.
+
+기울기에 따라 서로다른 pin이 켜지도록 하기
+
+```c++
+int tiltPin = 8;
+int yelPin =9;
+int redPin =10;
+int value;
+
+void setup() {
+  // put your setup code here, to run once:
+  Serial.begin(9600);
+  pinMode(tiltPin, INPUT);
+  pinMode(yelPin, OUTPUT);
+  pinMode(redPin, OUTPUT);
+  digitalWrite(tiltPin, HIGH);
+}
+
+void loop() {
+  // put your main code here, to run repeatedly:
+  value = digitalRead(tiltPin);
+  Serial.println(value);
+  if(value==0){
+    digitalWrite(yelPin, HIGH);
+    digitalWrite(redPin, LOW);
+  }
+  if(value==1){
+    
+    digitalWrite(yelPin, LOW);
+    digitalWrite(redPin, HIGH);
+  }
+  delay(100);
+}
+```
+
+> 기울이면 1이, 세우면 0이 출력된다. 
+
+## 37, 38, 39, 40. DC 모터
+
+내 키트에는 없다. 
+
+16개의 핀이 있는 드라이버랑 같이 모터가 있다. 
+이 드라이버 칩의 각 핀에는 역할이 있다. 그걸 이해해야함. L293D.
+
+그리고 맞는 핀에 모터를 연결해야한다. 
+
+속도, 방향, 그라운드, 전원을 받는 핀을 연결해야한다.
+
+
+## 41. Hex, 16진수
+
+스위치가 1개면, 2개의 값을
+2개면, 4개의 값을
+3개면 8개의 값을.. 나타낼 수 있다.
 
